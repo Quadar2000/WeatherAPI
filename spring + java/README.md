@@ -19,4 +19,4 @@ How to acces data, using request methods:
 - read previous current weather readings from database: GET http://localhost:8082/weather-data
 - read previous forecasts readings from database: GET http://localhost:8082/forecast-data
 
-If there are eny problems with port 8082 used by application, it may be changed in file application.properties
+If there are any problems with port 8082 used by application, it may be changed in file application.properties
