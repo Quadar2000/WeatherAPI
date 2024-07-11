@@ -27,21 +27,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TestSecurityConfig.class)
 public class WeatherControllerTest {
 
-    private final WeatherData.Location weatherLocation1 = new WeatherData.Location("Gliwice","Poland");
+    private final WeatherData weatherData1 = new WeatherData(new WeatherData.Location("Gliwice","Poland"));
 
-    private final WeatherData.Location weatherLocation2 = new WeatherData.Location("Hamburg","Germany");
+    private final WeatherData weatherData2 = new WeatherData(new WeatherData.Location("Hamburg","Germany"));
 
-    private final WeatherData weatherData1 = new WeatherData(weatherLocation1);
+    private final ForecastData forecastData1 = new ForecastData(new ForecastData.Location("Gliwice","Poland"));
 
-    private final WeatherData weatherData2 = new WeatherData(weatherLocation2 );
-
-    private final ForecastData.Location forecastLocation1 = new ForecastData.Location("Gliwice","Poland");
-
-    private final ForecastData.Location forecastLocation2 = new ForecastData.Location("Hamburg","Germany");
-
-    private final ForecastData forecastData1 = new ForecastData(forecastLocation1);
-
-    private final ForecastData forecastData2 = new ForecastData(forecastLocation2);
+    private final ForecastData forecastData2 = new ForecastData(new ForecastData.Location("Hamburg","Germany"));
     
 
     @Autowired
