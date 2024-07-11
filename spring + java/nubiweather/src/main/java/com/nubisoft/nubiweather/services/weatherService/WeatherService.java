@@ -37,6 +37,18 @@ public class WeatherService {
     @Autowired
     private ForecastDataRepository forecastDataRepository;
 
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    public void setWeatherApiUrl(String weatherApiUrl) {
+        this.weatherApiUrl = weatherApiUrl;
+    }
+
+    public void setForecastApiUrl(String forecastApiUrl) {
+        this.forecastApiUrl = forecastApiUrl;
+    }
+
     public WeatherData getWeatherData(String city) {
         try {
             String url = String.format(weatherApiUrl, apiKey, city);
@@ -51,7 +63,7 @@ public class WeatherService {
         }
     }
 
-    public ForecastData getForecastData(String city, int numDays) {
+    public ForecastData getForecastData(String city, Integer numDays) {
         try {
             String url = String.format(forecastApiUrl, apiKey, city, numDays);
             ForecastData forecastData = restTemplate.getForObject(url, ForecastData.class);

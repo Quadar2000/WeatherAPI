@@ -11,7 +11,8 @@ import com.nubisoft.nubiweather.models.weatherData.WeatherData;
 import com.nubisoft.nubiweather.other.forecastRequest.ForecastRequest;
 import com.nubisoft.nubiweather.services.weatherService.WeatherService;
 
-//import jakarta.validation.Valid;
+import jakarta.validation.Valid;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class WeatherController {
     }
 
     @PostMapping("/forecast-weather")
-    public List<ForecastData> getForecastWeather(@RequestBody ForecastRequest forecastRequest) {
+    public List<ForecastData> getForecastWeather(@Valid @RequestBody ForecastRequest forecastRequest) {
         List<ForecastData> forecastDataList = new ArrayList<>();
         for (String city : cities) {
             ForecastData forecastData = weatherService.getForecastData(city, forecastRequest.getNumDays());
