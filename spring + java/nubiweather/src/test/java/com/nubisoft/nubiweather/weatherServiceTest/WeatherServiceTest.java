@@ -14,12 +14,16 @@ import com.nubisoft.nubiweather.Repositories.forecastDataRepository.ForecastData
 import com.nubisoft.nubiweather.Repositories.weatherDataRepository.WeatherDataRepository;
 import com.nubisoft.nubiweather.exceptions.ForecastDataNotFoundException.ForecastDataNotFoundException;
 import com.nubisoft.nubiweather.exceptions.WeatherDataNotFoundException.WeatherDataNotFoundException;
+import com.nubisoft.nubiweather.exceptions.dataRetrievalException.DataRetrievalException;
 import com.nubisoft.nubiweather.models.forecastData.ForecastData;
 import com.nubisoft.nubiweather.models.weatherData.WeatherData;
 import com.nubisoft.nubiweather.services.weatherService.WeatherService;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 @SpringBootTest(classes = {NubiweatherApplication.class})
 public class WeatherServiceTest {
@@ -102,6 +106,62 @@ public class WeatherServiceTest {
         assertThrows(ForecastDataNotFoundException.class, () -> {
             weatherService.getForecastData("Gliwice", 5);
         });
+    }
+
+    @Test
+    public void testGetWeatherDataFromDatabase_Success() {
+
+        WeatherData weatherData1 = new WeatherData();
+        WeatherData weatherData2 = new WeatherData();
+        List<WeatherData> mockWeatherDataList = Arrays.asList(weatherData1, weatherData2);
+
+        when(weatherDataRepository.findAll()).thenReturn(mockWeatherDataList);
+
+        List<WeatherData> result = weatherService.getAllWeatherData();
+
+        assertNotNull(result);
+        verify(weatherDataRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void testGetWeatherDataFromDatabase_Failure() {
+
+        when(weatherDataRepository.findAll()).thenThrow(new RuntimeException("Database error"));
+
+        Exception exception = assertThrows(DataRetrievalException.class, () -> {
+            weatherService.getAllWeatherData();
+        });
+
+        assertEquals("Failed to retrieve weather data from the database.", exception.getMessage());
+        verify(weatherDataRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void testGetForecastDataFromDatabase_Success() {
+
+        ForecastData forecastData1 = new ForecastData();
+        ForecastData forecastData2 = new ForecastData();
+        List<ForecastData> mockForecastDataList = Arrays.asList(forecastData1, forecastData2);
+
+        when(forecastDataRepository.findAll()).thenReturn(mockForecastDataList);
+
+        List<ForecastData> result = weatherService.getAllForecastData();
+
+        assertNotNull(result);
+        verify(forecastDataRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void testGetForecastDataFromDatabase_Failure() {
+
+        when(forecastDataRepository.findAll()).thenThrow(new RuntimeException("Database error"));
+
+        Exception exception = assertThrows(DataRetrievalException.class, () -> {
+            weatherService.getAllForecastData();
+        });
+
+        assertEquals("Failed to retrieve forecast data from the database.", exception.getMessage());
+        verify(forecastDataRepository, times(1)).findAll();
     }
 
 }

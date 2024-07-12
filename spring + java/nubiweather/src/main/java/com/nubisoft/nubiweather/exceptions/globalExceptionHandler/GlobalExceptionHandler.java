@@ -11,23 +11,18 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.nubisoft.nubiweather.exceptions.ForecastDataNotFoundException.ForecastDataNotFoundException;
 import com.nubisoft.nubiweather.exceptions.WeatherDataNotFoundException.WeatherDataNotFoundException;
+import com.nubisoft.nubiweather.exceptions.dataRetrievalException.DataRetrievalException;
 import com.nubisoft.nubiweather.exceptions.invalidForecastRequestException.InvalidForecastRequestException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(WeatherDataNotFoundException.class)
+    @ExceptionHandler({WeatherDataNotFoundException.class,ForecastDataNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<String> handleWeatherDataNotFoundException(WeatherDataNotFoundException ex) {
+    public ResponseEntity<String> handleDataNotFoundException(WeatherDataNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ForecastDataNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<String> handleForecastDataNotFoundException(ForecastDataNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
-    
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidForecastRequestException.class)
     public ResponseEntity<Map<String, String>> handleInvalidForecastRequestException(InvalidForecastRequestException ex) {
@@ -35,4 +30,12 @@ public class GlobalExceptionHandler {
         error.put("error", ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(DataRetrievalException.class)
+    public ResponseEntity<Map<String, String>> handleDataRetrievalException(DataRetrievalException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
 }

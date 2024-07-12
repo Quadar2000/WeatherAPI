@@ -9,6 +9,7 @@ import com.nubisoft.nubiweather.Repositories.forecastDataRepository.ForecastData
 import com.nubisoft.nubiweather.Repositories.weatherDataRepository.WeatherDataRepository;
 import com.nubisoft.nubiweather.exceptions.ForecastDataNotFoundException.ForecastDataNotFoundException;
 import com.nubisoft.nubiweather.exceptions.WeatherDataNotFoundException.WeatherDataNotFoundException;
+import com.nubisoft.nubiweather.exceptions.dataRetrievalException.DataRetrievalException;
 import com.nubisoft.nubiweather.models.forecastData.ForecastData;
 import com.nubisoft.nubiweather.models.weatherData.WeatherData;
 
@@ -74,10 +75,18 @@ public class WeatherService {
     }
 
     public List<WeatherData> getAllWeatherData() {
-        return weatherDataRepository.findAll();
+        try{
+            return weatherDataRepository.findAll();
+        }catch(Exception e) {
+            throw new DataRetrievalException("Failed to retrieve weather data from the database.");
+        }
     }
 
     public List<ForecastData> getAllForecastData() {
-        return forecastDataRepository.findAll();
+        try{
+            return forecastDataRepository.findAll();
+        }catch(Exception e) {
+            throw new DataRetrievalException("Failed to retrieve forecast data from the database.");
+        }
     }
 }
