@@ -64,17 +64,13 @@ public class WeatherService {
     }
 
     public ForecastData getForecastData(String city, Integer numDays) {
-        try {
-            String url = String.format(forecastApiUrl, apiKey, city, numDays);
-            ForecastData forecastData = restTemplate.getForObject(url, ForecastData.class);
-            if (forecastData == null) {
-                throw new ForecastDataNotFoundException("Forecast data not found for city: " + city);
-            }
-            forecastDataRepository.save(forecastData);
-            return forecastData;
-        } catch (HttpClientErrorException e) {
+        String url = String.format(forecastApiUrl, apiKey, city, numDays);
+        ForecastData forecastData = restTemplate.getForObject(url, ForecastData.class);
+        if (forecastData == null) {
             throw new ForecastDataNotFoundException("Forecast data not found for city: " + city);
         }
+        forecastDataRepository.save(forecastData);
+        return forecastData;
     }
 
     public List<WeatherData> getAllWeatherData() {
