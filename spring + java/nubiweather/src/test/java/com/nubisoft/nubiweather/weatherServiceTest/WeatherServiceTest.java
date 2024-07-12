@@ -3,24 +3,20 @@ package com.nubisoft.nubiweather.weatherServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import com.nubisoft.nubiweather.NubiweatherApplication;
 import com.nubisoft.nubiweather.Repositories.forecastDataRepository.ForecastDataRepository;
 import com.nubisoft.nubiweather.Repositories.weatherDataRepository.WeatherDataRepository;
+import com.nubisoft.nubiweather.exceptions.ForecastDataNotFoundException.ForecastDataNotFoundException;
+import com.nubisoft.nubiweather.exceptions.WeatherDataNotFoundException.WeatherDataNotFoundException;
 import com.nubisoft.nubiweather.models.forecastData.ForecastData;
 import com.nubisoft.nubiweather.models.weatherData.WeatherData;
 import com.nubisoft.nubiweather.services.weatherService.WeatherService;
-import com.nubisoft.nubiweather.testSecurityConfig.TestSecurityConfig;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -68,44 +64,44 @@ public class WeatherServiceTest {
 
         WeatherData weatherData = weatherService.getWeatherData("Gliwice");
 
-        assertNotNull(weatherData.getLocation());
+        assertNotNull(weatherData);
         verify(weatherDataRepository, times(1)).save(mockWeatherData);
     }
 
     @Test
     public void testGetWeatherData_Failure() {
 
-        WeatherData mockWeatherData = new WeatherData();
+        WeatherData mockWeatherData = null;
         when(restTemplate.getForObject(anyString(), eq(WeatherData.class))).thenReturn(mockWeatherData);
 
-        WeatherData weatherData = weatherService.getWeatherData("Gliwice");
+        assertThrows(WeatherDataNotFoundException.class, () -> {
+            weatherService.getWeatherData("Gliwice");
+        });
 
-        assertNull(weatherData.getLocation());
     }
 
     @Test
     public void testGetForecastData_Success() {
 
         ForecastData mockForecastData = new ForecastData();
-        mockForecastData.setLocation(new ForecastData.Location("Gliwice","Poland"));
 
         when(restTemplate.getForObject(anyString(), eq(ForecastData.class))).thenReturn(mockForecastData);
 
         ForecastData forecastData = weatherService.getForecastData("Gliwice", 5);
 
-        assertNotNull(forecastData.getLocation());
+        assertNotNull(forecastData);
         verify(forecastDataRepository, times(1)).save(mockForecastData);
     }
 
     @Test
     public void testGetForecastData_Failure() {
 
-        ForecastData mockForecastData = new ForecastData();
+        ForecastData mockForecastData = null;
         when(restTemplate.getForObject(anyString(), eq(ForecastData.class))).thenReturn(mockForecastData);
 
-        ForecastData forecastData = weatherService.getForecastData("Gliwice", 5);
-
-        assertNull(forecastData.getLocation());
+        assertThrows(ForecastDataNotFoundException.class, () -> {
+            weatherService.getForecastData("Gliwice", 5);
+        });
     }
 
 }

@@ -6,13 +6,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nubisoft.nubiweather.exceptions.invalidForecastRequestException.InvalidForecastRequestException;
 import com.nubisoft.nubiweather.models.forecastData.ForecastData;
 import com.nubisoft.nubiweather.models.weatherData.WeatherData;
 import com.nubisoft.nubiweather.other.forecastRequest.ForecastRequest;
 import com.nubisoft.nubiweather.services.weatherService.WeatherService;
 
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,11 @@ public class WeatherController {
     }
 
     @PostMapping("/forecast-weather")
-    public List<ForecastData> getForecastWeather(@Valid @RequestBody ForecastRequest forecastRequest,HttpServletResponse response) {
+    public List<ForecastData> getForecastWeather( @RequestBody ForecastRequest forecastRequest,HttpServletResponse response) {
+
+        if (forecastRequest.getNumDays() < 1 || forecastRequest.getNumDays() > 10 || forecastRequest.getNumDays() == null) {
+            throw new InvalidForecastRequestException("Number of days can not be empty, lesser than 1 and greater than 10");
+        }
 
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         
@@ -47,7 +51,7 @@ public class WeatherController {
         }
         return forecastDataList;
     }
-
+ 
     @GetMapping("/weather-data")
     public List<WeatherData> getWeatherData() {
         return weatherService.getAllWeatherData();
